@@ -1,0 +1,6 @@
+<apex:page controller="CustomController" action="{!Approve}" >
+
+<apex:form >
+        <apex:pageMessages id="message"/>
+    </apex:form>
+</apex:page>

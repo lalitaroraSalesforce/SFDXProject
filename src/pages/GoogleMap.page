@@ -1,0 +1,230 @@
+<apex:page showHeader="false" controller="GoogleMap">
+    <apex:slds />
+    <html>
+        <head>
+            <style>
+                input[type=text], select {
+                width: 100%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+                }
+                
+                input[type=submit] {
+                width: 100%;
+                background-color: #4CAF50;
+                color: white;
+                padding: 14px 20px;
+                margin: 8px 0;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                }
+                
+                input[type=submit]:hover {
+                background-color: #45a049;
+                }
+                
+                .InputWindow {
+                border-radius: 5px;
+                background-color: #f2f2f2;
+                padding: 20px;
+                }
+            </style>
+            
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+            
+            <link rel="stylesheet" href="//developers.google.com/maps/documentation/javascript/demos/demos.css"/>
+               </head>
+                    <body>  
+                    
+                    <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-3">
+                    <span>   
+                    <div  class="InputWindow">
+                  
+                    
+                    <label for="country">Country</label>
+                    <select id="country" name="country">
+                    <option value="australia">Australia</option>
+                    <option value="canada">Canada</option>
+                    <option value="usa">USA</option>
+                    </select>
+                    <label for="fname">ZipCode/ Address</label>
+                    <input type="text" id="fname" name="firstname" placeholder="Your name.."/> 
+                    
+                    <input type="submit" value="Submit"/>
+                     
+                    </div>
+                    <div id="ShowList"> </div>
+                    </span>
+                    </div>
+                    <div class="slds-col slds-size_2-of-3">
+                    <span> 
+                    <div id="map"></div>
+                    </span>
+                    </div>
+                    </div>
+                    
+                    <script>
+                    var lexOrigin = 'https://{!$CurrentPage.parameters.lcHost}';
+                    
+                    //Data for Google map
+                    var data;
+                    
+                    //Send message to LC
+                    function sendToLC(message) {
+                        
+                        if(typeof(lexOrigin) != 'undefined'){
+                        parent.postMessage(message, lexOrigin);
+                    }
+                                      }
+                                      
+                                      //Receive message from LC
+                                      window.addEventListener("message", function(event) {
+                        //If page is public (like used in force.com sites) then be careful about the origin
+                        //if (event.origin !== lexOrigin) {
+                        // Not the expected origin: reject message!
+                        //return;
+                        //}
+                        // Handle message
+                        console.log('Data Sent to VF: ', event.data);
+                        data = event.data;
+                        
+                        
+                        if(typeof(event.data.loadGoogleMap) != 'undefined'){
+                            //Load Google Map Script
+                            var script = document.createElement("script");
+                            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBIZ4KlUypXd7GfGjqq_MhSNwX3LfivvXY&callback=initMap";
+                            document.getElementsByTagName("head")[0].appendChild(script);        
+                        }
+                    }, false);
+            
+            //Receive message from LC
+            window.addEventListener("locateAccount", function(event) {
+                //If page is public (like used in force.com sites) then be careful about the origin
+                //if (event.origin !== lexOrigin) {
+                // Not the expected origin: reject message!
+                //return;
+                //}
+                // Handle message
+                console.log('Mapped Account Recieved From Component : ', event.data);
+                data = event.data;
+                /*if(typeof(event.data.loadGoogleMap) != 'undefined'){
+                    //Load Google Map Script
+                    var script = document.createElement("script");
+                    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBIZ4KlUypXd7GfGjqq_MhSNwX3LfivvXY&callback=initMap";
+                    document.getElementsByTagName("head")[0].appendChild(script);        
+                }*/
+            }, false);
+            
+            var AccountIdMarkerMap = new Map();
+            var markers = [];
+            //Callback when Google Map is loaded
+            function initMap() {
+                
+                
+                //Add marker for each point along with text
+                function addMarker(feature) {
+                    
+                    var marker = new google.maps.Marker({
+                        position: feature.position,
+                        map: map,
+                        draggable: false,
+                        animation: google.maps.Animation.DROP
+                        
+                        //icon: icons[feature.type].icon,
+                    });
+                    //  console.log('feature', feature);
+                    marker.set("id", feature.Accountid);
+                    markers.push(marker);
+                    AccountIdMarkerMap.set(feature.Accountid, marker);
+                    
+                    
+                    
+                    marker.addListener('click', function() {
+                        for (var i = 0; i < markers.length; i++) {
+                            markers[i].setAnimation(null); 
+                        }
+                        console.log('map account',AccountIdMarkerMap);
+                        console.log('check this', this);
+                        console.log('check this id', this.id); 
+                        toggleBounce(this.id); 
+                        map.setCenter(marker.getPosition());
+                        
+                    }); 
+                    
+                    var infoWindow = new google.maps.InfoWindow({
+                        content: feature.markerText
+                    }); 
+                    
+                    marker.addListener('click', function() {
+                        infoWindow.open(map, marker);
+                    });   
+                }  
+                
+                function toggleBounce(ele) {
+                    
+                    console.log('Ele-->',ele);
+                    console.log('AccountIdMarkerMap-->',AccountIdMarkerMap);
+                    var MarkerNew = AccountIdMarkerMap.get(ele);
+                    console.log('MarkerNew-->',MarkerNew);
+                    if (MarkerNew.getAnimation() !== null) {
+                        MarkerNew.setAnimation(null);
+                    } else {
+                        MarkerNew.setAnimation(google.maps.Animation.BOUNCE);
+                    }
+                }             
+                //Create new map
+                var map = new google.maps.Map(document.getElementById("map"), JSON.parse(data.mapOptions));
+                
+                //Set map center
+                map.setCenter(data.mapOptionsCenter);
+                
+                //iterate through map data for each point (even if 1)
+                var mapData = data.mapData;
+                var Acc = data.acc;
+                var AccountAddress;
+                for(var i=0, j=Acc.length; i<j; i++){
+                    AccountAddress = Acc[i].BillingStreet + ', '+Acc[i].BillingCity + ', '+Acc[i].BillingState + ', '+Acc[i].BillingCountry + '-'+Acc[i].BillingPostalCode ;
+                    $("#ShowList").append('<a href ="JavaScript:void(0);" onclick="toggleBounce1(\''+Acc[i].Id+'\')">'+Acc[i].Name+'</a> <br/>'+AccountAddress+'<br/>'+Acc[i].Phone+'<br/>'+Acc[i].Website+'<br/><br/>');
+                }
+                
+                for(var i=0, j=mapData.length; i<j; i++){
+                    //Add marker for each point
+                    var geocoder = new google.maps.Geocoder();
+                    // Add GEOCODE if need
+                    var myLatlng = new google.maps.LatLng(mapData[i].lat, mapData[i].lng);
+                    addMarker({position: myLatlng,Accountid: mapData[i].AccountId, markerText: mapData[i].markerText  });
+                }
+                
+            }
+            
+            function toggleBounce1(ele) {
+                
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setAnimation(null); 
+                }
+                console.log('Ele-->',ele);
+                console.log('AccountIdMarkerMap-->',AccountIdMarkerMap);
+                var MarkerNew = AccountIdMarkerMap.get(ele);
+                console.log('MarkerNew-->',MarkerNew);
+                if (MarkerNew.getAnimation() !== null) {
+                    MarkerNew.setAnimation(null);
+                } else {
+                    MarkerNew.setAnimation(google.maps.Animation.BOUNCE);
+                }
+            }     
+            
+            //Let LC know that VF page been loaded along with it's URL
+            //LC will then send the data
+            //This is done because LC has no way to know that VF page in iFrame has been loaded, event listener set and ready for data
+            var vfHost = "{!LEFT($CurrentPage.URL,FIND('/',$CurrentPage.URL,9))}";
+            sendToLC({'state':'LOADED', 'vfHost': vfHost});
+            </script>      
+        </body>
+    </html>
+</apex:page>

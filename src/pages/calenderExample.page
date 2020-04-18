@@ -1,0 +1,6 @@
+<apex:page controller="CalendarExample_Controller" > 
+<div style="Font-size:40px; text-align:Center"> {!MonthYear} </div>
+ <table Border="0" bordercolor="#f2f2f2"  Style=" border-collapse: separate;  border-spacing: 10px 1rem;">
+<apex:outputText escape="false"  value="{!TableData}"> </apex:outputText>
+</table>
+</apex:page>

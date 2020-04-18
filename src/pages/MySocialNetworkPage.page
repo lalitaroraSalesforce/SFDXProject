@@ -1,0 +1,8 @@
+<apex:page controller="MySocialNetworkPagecONTROLLER" >
+  <!-- begin Default Content REMOVE THIS -->
+  <h1>FaceBook</h1><br/>
+  <h1>Linkedin</h1><br/>
+  <h1>Twitter</h1><br/>
+  
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>
