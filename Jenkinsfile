@@ -27,14 +27,16 @@ node {
             if (isUnix()) {
                 rc = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} -d --instanceurl ${SFDC_HOST}"
             } else {
+                rc1 = bat returnStatus: true, script: "sfdx -v"
                 rc = bat returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" -d --instanceurl ${SFDC_HOST}"
             }
             
             if (rc != 0) {
                 error 'hub org authorization failed'
             }
-
+   println(rc1)
             println(rc)
+         
             /*if (isUnix()) {
                 scratchorg = sh returnStdout: true, script: "sfdx force:org:create -f ./config/project-scratch-def.json --json -a ci-cd-org -s -w 10 -d 30"
             } else {
