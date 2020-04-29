@@ -7,7 +7,7 @@ pipeline {
   stages {
  
       stage('master') {
-          when { branch 'master' }
+          
           stages{
                
               stage('deploy_to_devOrg'){
@@ -22,8 +22,8 @@ pipeline {
                      // sh "adx deploy:source --sourcepath force-org/default/metadata,force-org/sample/metadata --testlevel RunLocalTests --targetalias UAT"
                         sh "adx --help"
                   }
-              } 
-          }
-      } 
+               } 
+            }
+        } 
     }
 }
