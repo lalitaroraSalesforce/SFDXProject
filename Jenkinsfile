@@ -55,13 +55,8 @@ pipeline {
                         withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
                             stage('Create Scratch Org') {
 
-                                rc = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} -d --instanceurl ${SFDC_HOST}"
-                            }
-
-                            if (rc != 0) {
-                                error 'hub org authorization failed'
-                            }
-
+                                sh "sfdx force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} -d --instanceurl ${SFDC_HOST}"
+                            } 
                         }
                         stage('Convert Salesforce DX and Store in SRC Folder') {
                             println(' Convert SFDC Project to normal project')
