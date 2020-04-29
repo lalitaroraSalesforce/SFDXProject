@@ -1,13 +1,6 @@
 pipeline {
     
-   agent {
-   dockerfile {
-            dir '.'
-            filename 'Dockerfile'
-            additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
-            label 'jenkins-slave'
-        }
-   }
+    agent { dockerfile true }
     
     stages {
         
