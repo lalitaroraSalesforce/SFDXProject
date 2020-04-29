@@ -24,6 +24,13 @@ pipeline {
         SF_DEPLOY__ENABLED = true
 
     }
+	 stages {
+                            stage('Checkout SCM') {
+                                steps {
+                                    checkout scm
+                                }
+                            }
+                        }
     stages {
 
         stage('master') {
@@ -38,7 +45,7 @@ pipeline {
                         }
                     }
                     steps {
-                        
+                       
                         //sh "adx metadata:unique --sourcepath force-org/default/metadata,force-org/sample/metadata"
                         sh "sfdx --version"
                     }
