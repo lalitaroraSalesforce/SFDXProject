@@ -1,8 +1,13 @@
 pipeline {
     
   agent {
-        docker { image 'node:7-alpine' }
-    }   
+        dockerfile {
+            dir '.'
+            filename 'Dockerfile'
+            additionalBuildArgs '--build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g)'
+            
+        }
+      
     stages {
         
         stage("build") {
