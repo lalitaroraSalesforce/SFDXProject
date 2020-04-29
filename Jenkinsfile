@@ -23,6 +23,7 @@ node {
     println HUB_ORG
     println SFDC_HOST
     println CONNECTED_APP_CONSUMER_KEY
+}
 
 pipeline {
   agent any
@@ -53,4 +54,4 @@ pipeline {
         } 
     }
 }
-}
+
