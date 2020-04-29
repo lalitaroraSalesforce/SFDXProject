@@ -5,11 +5,13 @@ import groovy.json.JsonSlurperClassic
 def BUILD_NUMBER = env.BUILD_NUMBER
 def SFDC_HOST = 'https://login.salesforce.com'
 def SFDC_ORG_ALIAS = 'DemoSandbox'
-def SFDC_HUB_USERNAME = 'lalitarora.sf@gmail.com'
-def JWT_KEY = '409a6643-2205-4031-a09f-1f9478fd7503'
-def CONSUMER_KEY = '3MVG9ZL0ppGP5UrDARg58VXx7n5Z8skJa5gBQSgIPWSXgP9m9WAuFSHVEKvVyAhcDgdfP5e8ojkVuJqQe25Ww'
+def SFDC_HUB_USERNAME = 'SFDC_HUB_USERNAME'
+def JWT_KEY = 'JWT_KEY'
+def CONSUMER_KEY = 'CON_KEY'
 def RUN_ARTIFACT_DIR = "tests/${BUILD_NUMBER}"
 def SFDC_USERNAME
+
+
 
 
 println JWT_KEY
