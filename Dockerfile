@@ -1,22 +1,18 @@
-# Use jenkins base image
-FROM jenkins
+FROM node:alpine
 
-# Run install as root
-USER root
+RUN apk add --update --no-cache git openssh ca-certificates openssl jq gettext xmlstarlet openjdk8 curl zip unzip bash
 
-# Install sfdx
-RUN apt-get update && \
-    apt-get -y install wget && \
-    apt-get -y install xz-utils && \
-    cd ~ && \
-    wget https://developer.salesforce.com/media/salesforce-cli/sfdx-v5.6.22-f9533ba-linux-amd64.tar.xz -O sfdx.tar.xz && \
-    apt-get update && \
-    tar -xvJf ~/sfdx.tar.xz && \
-    cd heroku && \
-    ./install && \
-    apt-get -y install git && \
-    sfdx update && \
-    sfdx force --help
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+RUN addgroup -g $GROUP_ID jenkins-ci && \
+    adduser -u $USER_ID -s /bin/sh -G jenkins-ci jenkins-ci -h /home/jenkins-ci -D
 
-# Exit root
-RUN exit
+RUN npm install sfdx-cli --global
+RUN sfdx --version
+RUN sfdx plugins --core
+
+RUN rm -rf /root/.npm
+RUN rm -rf /root/.sfdx
+RUN rm -rf /root/.local/share/sfdx
+RUN rm -rf /root/.config/sfdx
+RUN rm -rf /root/.cache/sfdx
