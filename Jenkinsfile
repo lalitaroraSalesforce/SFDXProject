@@ -1,7 +1,21 @@
-image: appirio/dx:latest
-
-pipelines:
-    default:
-      -step:
-        script:
-         - sfdx force --help
+pipeline {
+    
+    agent any 
+    
+    stages {
+        
+        stage("build") {
+            
+            steps {
+                
+            }
+        } 
+        
+        stage("deploy") {
+            
+            steps {
+                
+            }
+        }
+    }
+}
