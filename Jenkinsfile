@@ -23,7 +23,7 @@ pipeline {
 			SF_DEPLOY__ENABLED = true
 		}
 
-		
+	stages {	
 stage('deploy_to_devOrg') {
                     agent {
                         docker {
@@ -60,6 +60,7 @@ stage('deploy_to_devOrg') {
 						}
 					} 
 				} 
+				}
 			} 
 		}
 	}
