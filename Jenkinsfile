@@ -20,7 +20,7 @@ pipeline {
                   steps {
                      // sh "adx metadata:unique --sourcepath force-org/default/metadata,force-org/sample/metadata"
                      // sh "adx deploy:source --sourcepath force-org/default/metadata,force-org/sample/metadata --testlevel RunLocalTests --targetalias UAT"
-                        sh "adx --help"
+                        sh "sfdx --version"
                   }
                } 
             }
