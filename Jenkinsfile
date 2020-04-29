@@ -1,7 +1,7 @@
 pipeline {
     
    agent {
-   
+    docker { image 'appirio/dx' } 
     }
     
     stages {
