@@ -43,8 +43,9 @@ pipeline {
                         //sh "adx metadata:unique --sourcepath force-org/default/metadata,force-org/sample/metadata"
                         sh "sfdx --version"
 						script { 
+						withCredentials([file(credentialsId: JWT_KEY, variable: 'jwt_key_file')]) {
 								rc = sh returnStatus: true,script: "sfdx --version"
-								rc = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid ${CONSUMER_KEY} --username ${SFDC_HUB_USERNAME} --jwtkeyfile \"${JWT_KEY}\" -d --instanceurl ${SFDC_HOST}"
+								rc = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid ${CONSUMER_KEY} --username ${SFDC_HUB_USERNAME} --jwtkeyfile \"${jwt_key_file}\" -d --instanceurl ${SFDC_HOST}"
 								if (rc != 0){
 									error 'ORG authorization failed'
 								}
@@ -52,7 +53,8 @@ pipeline {
 								print dmsg
 								lmsg = sh returnStdout: true, script: "sfdx force:org:list --all"
 								print lmsg
-							
+								
+						    } 
 						}
                     }
                 }
