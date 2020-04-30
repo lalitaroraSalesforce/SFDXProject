@@ -43,6 +43,7 @@ pipeline {
                         //sh "adx metadata:unique --sourcepath force-org/default/metadata,force-org/sample/metadata"
                         sh "sfdx --version"
 						script { 
+								rc = sh returnStatus: true,script: "sfdx --version"
 								rc = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid ${CONSUMER_KEY} --username ${SFDC_HUB_USERNAME} --jwtkeyfile ${JWT_KEY} -d --instanceurl ${SFDC_HOST}"
 								if (rc != 0){
 									error 'ORG authorization failed'
