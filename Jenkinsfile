@@ -49,10 +49,7 @@ pipeline {
 								if (rc != 0){
 									error 'ORG authorization failed'
 								}
-								dmsg = sh returnStdout: true, script: "sfdx force:config:set defaultusername=${SFDC_ORG_ALIAS} --global"
-								print dmsg
-								lmsg = sh returnStdout: true, script: "sfdx force:org:list --all"
-								print lmsg
+								 
 								
 						    } 
 						}
