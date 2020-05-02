@@ -66,12 +66,12 @@ pipeline {
                         sourcepush = sh returnStdout: true, script: "sfdx force:mdapi:deploy -d ./src -u ${SFDC_HUB_USERNAME}"
                         println(sourcepush)
                         println('Checking Deployment Status');
-                        statusDep = sh returnStdout: true, script: "sfdx force:mdapi:deploy:report -u ${HUB_ORG} --json"
+                        statusDep = sh returnStdout: true, script: "sfdx force:mdapi:deploy:report -u ${SFDC_HUB_USERNAME} --json"
                         println(' Deployment Status ')
                         println(statusDep)
                         sleep 30
                         println('Checking Deployment Status Again ');
-                        statusDep1 = sh returnStdout: true, script: "sfdx force:mdapi:deploy:report -u ${HUB_ORG} --json"
+                        statusDep1 = sh returnStdout: true, script: "sfdx force:mdapi:deploy:report -u ${SFDC_HUB_USERNAME} --json"
                         println(statusDep1)
 
 
