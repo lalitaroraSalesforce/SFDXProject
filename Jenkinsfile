@@ -31,7 +31,7 @@ pipeline {
 
             stages {
 
-                stage('deploy_to_devOrg') {
+                stage('Start Scripts') {
                     agent {
                         docker {
                             image '$ADX_IMAGE'
@@ -42,20 +42,26 @@ pipeline {
                        checkout scm
                         //sh "adx metadata:unique --sourcepath force-org/default/metadata,force-org/sample/metadata"
                         sh "sfdx --version"
-						script { 
+				script { 
+					  stages {
+
+               					 stage('Establish JWT SFDX Connect') {
+							
 						withCredentials([file(credentialsId: JWT_KEY, variable: 'jwt_key_file')]) {
 								rc = sh returnStatus: true,script: "sfdx --version"
 								rc = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid ${CONSUMER_KEY} --username ${SFDC_HUB_USERNAME} --jwtkeyfile \"${jwt_key_file}\" -d --instanceurl ${SFDC_HOST}"
 								if (rc != 0){
 									error 'ORG authorization failed'
-								}
-								 
-								
-						    } 
-						}
-                    }
-                }
-            }
-        }
-    }
+							}
+						      } 
+						   }
+					  }
+					
+					
+					  }
+					}
+				}
+			}
+		}
+	}
 }
