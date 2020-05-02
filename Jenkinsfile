@@ -52,6 +52,30 @@ pipeline {
                         }
 
                     }
+
+                    stage('Convert Salesforce DX and Store in SRC Folder') {
+
+                        println(' Convert SFDC Project to normal project')
+                        srccode = sh returnStdout: true, script: "sfdx force:source:convert -r force-app -d ./src"
+
+                    }
+
+                    stage('Push To Target Org') {
+
+                        println(' Deploy the code into Scratch ORG.')
+                        sourcepush = sh returnStdout: true, script: "sfdx force:mdapi:deploy -d ./src -u ${SFDC_HUB_USERNAME}"
+                        println(sourcepush)
+                        println('Checking Deployment Status');
+                        statusDep = sh returnStdout: true, script: "sfdx force:mdapi:deploy:report -u ${HUB_ORG} --json"
+                        println(' Deployment Status ')
+                        println(statusDep)
+                        sleep 30
+                        println('Checking Deployment Status Again ');
+                        statusDep1 = sh returnStdout: true, script: "sfdx force:mdapi:deploy:report -u ${HUB_ORG} --json"
+                        println(statusDep1)
+
+
+                    }
                 }
             }
         }
