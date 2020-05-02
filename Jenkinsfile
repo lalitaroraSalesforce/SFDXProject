@@ -24,44 +24,36 @@ pipeline {
         SF_DEPLOY__ENABLED = true
 
     }
-	 
+
+
     stages {
 
-        stage('master') {
+        stage('Start Scripts') {
+            agent {
+                docker {
+                    image '$ADX_IMAGE'
+                    alwaysPull true
+                }
+            }
+            steps {
+                checkout scm
+                //sh "adx metadata:unique --sourcepath force-org/default/metadata,force-org/sample/metadata"
+                sh "sfdx --version"
+                script {
 
-            stages {
+                    stage('Establish JWT SFDX Connect') {
 
-                stage('Start Scripts') {
-                    agent {
-                        docker {
-                            image '$ADX_IMAGE'
-                            alwaysPull true
+                        withCredentials([file(credentialsId: JWT_KEY, variable: 'jwt_key_file')]) {
+                            rc = sh returnStatus: true, script: "sfdx --version"
+                            rc = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid ${CONSUMER_KEY} --username ${SFDC_HUB_USERNAME} --jwtkeyfile \"${jwt_key_file}\" -d --instanceurl ${SFDC_HOST}"
+                            if (rc != 0) {
+                                error 'ORG authorization failed'
+                            }
                         }
-                    }
-                    steps {
-                       checkout scm
-                        //sh "adx metadata:unique --sourcepath force-org/default/metadata,force-org/sample/metadata"
-                        sh "sfdx --version"
-				script { 
-					  stages {
 
-               					 stage('Establish JWT SFDX Connect') {
-							
-						withCredentials([file(credentialsId: JWT_KEY, variable: 'jwt_key_file')]) {
-								rc = sh returnStatus: true,script: "sfdx --version"
-								rc = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid ${CONSUMER_KEY} --username ${SFDC_HUB_USERNAME} --jwtkeyfile \"${jwt_key_file}\" -d --instanceurl ${SFDC_HOST}"
-								if (rc != 0){
-									error 'ORG authorization failed'
-							}
-						      } 
-						   }
-					  }
-					
-					
-					  }
-					}
-				}
-			}
-		}
-	}
+                    }
+                }
+            }
+        }
+    }
 }
