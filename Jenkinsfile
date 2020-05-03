@@ -15,7 +15,13 @@ pipeline {
                     image '$ADX_IMAGE'
                     alwaysPull true
                 }
-            } 
+            }
+            steps {
+                checkout scm
+                //sh "adx metadata:unique --sourcepath force-org/default/metadata,force-org/sample/metadata"
+                sh "sfdx --version"
+                
+            }
         }
     }
 }
