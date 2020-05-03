@@ -22,7 +22,7 @@ pipeline {
                 script {
 
                     stage('Establish JWT SFDX Connect') {
-
+					rc = sh returnStatus: true, script: "sfdx --version"
                         
                     }
 
